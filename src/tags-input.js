@@ -49,10 +49,16 @@ tagsInput.directive('tagsInput', function($timeout, $document, tagsInputConfig) 
         tagIsValid = function(tag) {
             var tagText = getTagText(tag);
 
-            return tagText.length >= options.minLength &&
-                   tagText.length <= (options.maxLength || tagText.length) &&
-                   options.allowedTagsPattern.test(tagText) &&
-                   !findInObjectArray(self.items, tag, options.displayProperty);
+            var isValid = tagText.length >= options.minLength &&
+                               tagText.length <= (options.maxLength || tagText.length) &&
+                               options.allowedTagsPattern.test(tagText) &&
+                               !findInObjectArray(self.items, tag, options.displayProperty);
+
+            if(options.onTagAddedValidator) {
+                isValid = isValid && options.onTagAddedValidator.call(null, tagText);
+            }
+
+            return isValid;
         };
 
         self.items = [];
@@ -112,7 +118,8 @@ tagsInput.directive('tagsInput', function($timeout, $document, tagsInputConfig) 
         scope: {
             tags: '=ngModel',
             onTagAdded: '&',
-            onTagRemoved: '&'
+            onTagRemoved: '&',
+            onTagAddedValidator: '&'
         },
         replace: false,
         transclude: true,
@@ -138,6 +145,7 @@ tagsInput.directive('tagsInput', function($timeout, $document, tagsInputConfig) 
                 addFromAutocompleteOnly: [Boolean, false]
             });
 
+            $scope.options.onTagAddedValidator = $scope.onTagAddedValidator.call(null);
             $scope.events = new SimplePubSub();
             $scope.tagList = new TagList($scope.options, $scope.events);
 

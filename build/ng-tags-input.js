@@ -1,13 +1,15 @@
 /*!
  * ngTagsInput v2.0.1
- * http://mbenford.github.io/ngTagsInput
+ * http://sergiu-paraschiv.github.io/ngTagsInput
  *
  * Copyright (c) 2013-2014 Michael Benford
  * License: MIT
  *
- * Generated at 2014-04-13 21:25:38 -0300
+ * Generated at 2014-06-11 12:27:26 +0300
  */
 (function() {
+'use strict';
+
 'use strict';
 
 var KEYS = {
@@ -20,6 +22,8 @@ var KEYS = {
     down: 40,
     comma: 188
 };
+
+'use strict';
 
 function SimplePubSub() {
     var events = {};
@@ -71,7 +75,11 @@ function replaceAll(str, substr, newSubstr) {
     return str.replace(new RegExp(expression, 'gi'), newSubstr);
 }
 
+'use strict';
+
 var tagsInput = angular.module('ngTagsInput', []);
+
+'use strict';
 
 /**
  * @ngdoc directive
@@ -122,10 +130,16 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
         tagIsValid = function(tag) {
             var tagText = getTagText(tag);
 
-            return tagText.length >= options.minLength &&
-                   tagText.length <= (options.maxLength || tagText.length) &&
-                   options.allowedTagsPattern.test(tagText) &&
-                   !findInObjectArray(self.items, tag, options.displayProperty);
+            var isValid = tagText.length >= options.minLength &&
+                               tagText.length <= (options.maxLength || tagText.length) &&
+                               options.allowedTagsPattern.test(tagText) &&
+                               !findInObjectArray(self.items, tag, options.displayProperty);
+
+            if(options.onTagAddedValidator) {
+                isValid = isValid && options.onTagAddedValidator.call(null, tagText);
+            }
+
+            return isValid;
         };
 
         self.items = [];
@@ -185,7 +199,8 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
         scope: {
             tags: '=ngModel',
             onTagAdded: '&',
-            onTagRemoved: '&'
+            onTagRemoved: '&',
+            onTagAddedValidator: '&'
         },
         replace: false,
         transclude: true,
@@ -211,6 +226,7 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
                 addFromAutocompleteOnly: [Boolean, false]
             });
 
+            $scope.options.onTagAddedValidator = $scope.onTagAddedValidator.call(null);
             $scope.events = new SimplePubSub();
             $scope.tagList = new TagList($scope.options, $scope.events);
 
@@ -369,6 +385,9 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
         }
     };
 }]);
+
+
+'use strict';
 
 /**
  * @ngdoc directive
@@ -605,6 +624,8 @@ tagsInput.directive('autoComplete', ["$document","$timeout","$sce","tagsInputCon
     };
 }]);
 
+'use strict';
+
 /**
  * @ngdoc directive
  * @name tiTranscludeAppend
@@ -620,6 +641,8 @@ tagsInput.directive('tiTranscludeAppend', function() {
         });
     };
 });
+
+'use strict';
 
 /**
  * @ngdoc directive
@@ -675,6 +698,8 @@ tagsInput.directive('tiAutosize', function() {
         }
     };
 });
+
+'use strict';
 
 /**
  * @ngdoc service
@@ -764,9 +789,12 @@ tagsInput.provider('tagsInputConfig', function() {
 
 /* HTML templates */
 tagsInput.run(["$templateCache", function($templateCache) {
-    $templateCache.put('ngTagsInput/tags-input.html',
+  'use strict';
+
+  $templateCache.put('ngTagsInput/tags-input.html',
     "<div class=\"host\" tabindex=\"-1\" ti-transclude-append=\"\"><div class=\"tags\" ng-class=\"{focused: hasFocus}\"><ul class=\"tag-list\"><li class=\"tag-item\" ng-repeat=\"tag in tagList.items track by track(tag)\" ng-class=\"{ selected: tag == tagList.selected }\"><span>{{getDisplayText(tag)}}</span> <a class=\"remove-button\" ng-click=\"tagList.remove($index)\">{{options.removeTagSymbol}}</a></li></ul><input class=\"input\" placeholder=\"{{options.placeholder}}\" tabindex=\"{{options.tabindex}}\" ng-model=\"newTag.text\" ng-change=\"newTagChange()\" ng-trim=\"false\" ng-class=\"{'invalid-tag': newTag.invalid}\" ti-autosize=\"\"></div></div>"
   );
+
 
   $templateCache.put('ngTagsInput/auto-complete.html',
     "<div class=\"autocomplete\" ng-show=\"suggestionList.visible\"><ul class=\"suggestion-list\"><li class=\"suggestion-item\" ng-repeat=\"item in suggestionList.items track by track(item)\" ng-class=\"{selected: item == suggestionList.selected}\" ng-click=\"addSuggestion()\" ng-mouseenter=\"suggestionList.select($index)\" ng-bind-html=\"highlight(item)\"></li></ul></div>"
