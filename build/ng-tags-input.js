@@ -1,11 +1,11 @@
 /*!
- * ngTagsInput v2.0.1-devsp
+ * ngTagsInput v2.0.1-dev
  * http://sergiu-paraschiv.github.io/ngTagsInput
  *
  * Copyright (c) 2013-2014 Michael Benford
  * License: MIT
  *
- * Generated at 2014-07-09 13:00:56 +0300
+ * Generated at 2014-07-09 13:31:34 +0300
  */
 (function() {
 'use strict';
@@ -136,7 +136,7 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
                                !findInObjectArray(self.items, tag, options.displayProperty);
 
             if(options.onTagAddedValidator) {
-                isValid = isValid && options.onTagAddedValidator.call(null, tagText);
+                isValid = options.onTagAddedValidator.call(null, tagText) && isValid;
             }
 
             return isValid;
