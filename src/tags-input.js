@@ -228,6 +228,8 @@ tagsInput.directive('tagsInput', function($timeout, $document, tagsInputConfig) 
             scope.$watch('tags', function(value) {
                 scope.tags = makeObjectArray(value, options.displayProperty);
                 tagList.items = scope.tags;
+                scope.newTag.text = '';
+                scope.newTag.invalid = null;
             });
 
             scope.$watch('tags.length', function(value) {
