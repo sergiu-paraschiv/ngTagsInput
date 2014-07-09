@@ -55,7 +55,7 @@ tagsInput.directive('tagsInput', function($timeout, $document, tagsInputConfig) 
                                !findInObjectArray(self.items, tag, options.displayProperty);
 
             if(options.onTagAddedValidator) {
-                isValid = isValid && options.onTagAddedValidator.call(null, tagText);
+                isValid = options.onTagAddedValidator.call(null, tagText) && isValid;
             }
 
             return isValid;
